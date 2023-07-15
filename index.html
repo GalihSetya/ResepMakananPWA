@@ -1,33 +1,39 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.json">
   <title>Resep Menu Makanan</title>
-  <link rel="manifest" href="/manifest.json">
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then(function(registration) {
-          console.log('Service Worker registered with scope:', registration.scope);
-        })
-        .catch(function(error) {
-          console.error('Service Worker registration failed:', error);
-        });
-    }
-  </script>
 </head>
+
 <body>
   <header>
-    <h1>Resep Menu Makanan</h1>
+    <h1>List Menu Makanan Hari Ini</h1>
   </header>
-  
-  <main>
-    <div id="categories"></div>
-    <div id="meals"></div>
-  </main>
 
-  <script src="/app.js"></script>
+<main>
+    <div class="container" id="dataContainer"></div>
+    <div class="container" id="detailContainer"></div>
+  </main>
+    
+  <script src="index.js"></script>
+  <script>
+    // Mendaftarkan Service Worker saat halaman dimuat
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(registration => {
+        console.log('Service Worker registered:', registration);
+      })
+      .catch(error => {
+        console.log('Service Worker registration failed:', error);
+      });
+  });
+}
+  </script>
 </body>
+
 </html>

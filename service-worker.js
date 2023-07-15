@@ -1,34 +1,38 @@
-// service-worker.js
-const CACHE_NAME = 'recipe-app-v1';
+// Nama cache untuk aplikasi
+const CACHE_NAME = 'my-app-cache';
+
+// Daftar file yang akan dicache
 const urlsToCache = [
   '/',
   '/index.html',
-  '/app.js',
-  '/manifest.json'
-  // Tambahkan sumber daya lain yang perlu di-cache di sini
+  '/styles.css',
+  '/index.js'
 ];
 
+// Event listener saat Service Worker diinstall
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
-      .then(() => self.skipWaiting())
+      .then(cache => {
+        return cache.addAll(urlsToCache);
+      })
   );
 });
 
+// Event listener saat Service Worker diaktifkan
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
       .then(cacheNames => {
         return Promise.all(
-          cacheNames.filter(cacheName => cacheName !== CACHE_NAME)
-            .map(cacheName => caches.delete(cacheName))
+          cacheNames.filter(name => name !== CACHE_NAME)
+            .map(name => caches.delete(name))
         );
       })
-      .then(() => self.clients.claim())
   );
 });
 
+// Event listener saat ada permintaan fetch
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
@@ -36,22 +40,7 @@ self.addEventListener('fetch', event => {
         if (response) {
           return response;
         }
-
-        return fetch(event.request)
-          .then(response => {
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-
-            const responseToCache = response.clone();
-
-            caches.open(CACHE_NAME)
-              .then(cache => {
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
-          });
+        return fetch(event.request);
       })
   );
 });
